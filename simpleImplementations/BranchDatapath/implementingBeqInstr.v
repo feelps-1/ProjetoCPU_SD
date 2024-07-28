@@ -26,6 +26,7 @@ module instruction_memory(
             32'd0: instruction = 32'b100011_01000_01001_0000000000000000; // lw r8, 0(r9)
             32'd4: instruction = 32'b101011_10000_01101_0000000000010000; // sw r8, 16(r13)
             32'd8: instruction = 32'b000000_01010_01011_01100_00000_100000; // add r12, r10, r11
+            32'd12: instruction = 32'b000100_10001_10010_0000000000001000; //beq r17, r18, 1
             default: instruction = 32'b0;
         endcase
     end
@@ -52,8 +53,8 @@ module RegisterFile(ReadRegister1, ReadRegister2, WriteRegister, WriteData,  Reg
         Registers[14] = 32'h00000000;
         Registers[15] = 32'h00000009;
         Registers[16] = 32'h00000000;
-        Registers[17] = 32'h00000000;
-        Registers[18] = 32'h00000000;
+        Registers[17] = 32'h0000000F;
+        Registers[18] = 32'h0000000F;
         Registers[19] = 32'h00000000;
         Registers[20] = 32'h00000000;
         Registers[21] = 32'h00000000;
@@ -175,6 +176,14 @@ module adder_plus_4(
     assign out = in + 4;
 endmodule
 
+module adder(
+    input  [31:0] p1,
+    input [31:0] p2,
+    output [31:0] out
+);
+    assign out = p1 + p2;
+endmodule
+
 module mux2to132bit (
     input [31:0]word_a,
     input [31:0]word_b,// Entradas de dados
@@ -197,13 +206,23 @@ module mux2to15bit (
 
 endmodule
 
+module multiply_by_4(
+    input wire [31:0] in,
+    output wire [31:0] out
+);
+
+    // Multiplica o valor de entrada por 4 usando deslocamento à esquerda
+    assign out = in << 2;
+
+endmodule
+
 module cpu(
     input wire clock,
     input wire reset,
     input wire enable
 );
     // Sinais internos
-    wire [31:0] pcAdress, nextPCAdress;
+    wire [31:0] pcAdress, nextPCAdress, offsetPC, pcBranch, pcPlus4;
     wire [31:0] instructionWord;
     reg [4:0] dataRegister1, dataRegister2;
     wire [4:0] wRegister1, wRegister2, wRegister;
@@ -211,10 +230,10 @@ module cpu(
     reg [15:0] wordToExtend;
     wire [31:0] extendedWord;
     wire [31:0] ALUSrcA, ALUSrcB, resultALU;
-    wire [3:0] controlSignalALU;
+    reg [3:0] controlSignalALU;
     wire ALUZero;
     reg [31:0] readDataMem;
-    reg ALUSrc, RegDst, MemToReg, regWrite, memWrite;
+    reg ALUSrc, RegDst, MemToReg, regWrite, memWrite, Branch, PCSrc;
     wire [31:0] result;
 
     always @(instructionWord) begin
@@ -225,6 +244,8 @@ module cpu(
                 ALUSrc <= 1'b0;
                 memWrite <= 1'b0;
                 MemToReg <= 1'b0;
+                controlSignalALU <= 4'b0000;
+                Branch <= 1'b0;
             end
 
             6'b100011: begin
@@ -233,6 +254,8 @@ module cpu(
                 ALUSrc <= 1'b1;
                 memWrite <= 1'b0;
                 MemToReg <= 1'b1;
+                Branch <= 1'b0;
+                controlSignalALU <= 4'b0000;
             end
 
             6'b101011: begin
@@ -241,16 +264,43 @@ module cpu(
                 ALUSrc <= 1'b1;
                 memWrite <= 1'b1;
                 MemToReg <= 1'bX;
+                Branch <= 1'b0;
+                controlSignalALU <= 4'b0000;
+            end
+
+            6'b000100: begin
+                regWrite <= 1'b0;
+                RegDst <= 1'bX;
+                ALUSrc <= 1'b0;
+                memWrite <= 1'b0;
+                MemToReg <= 1'bX;
+                Branch <= 1'b1;
+                controlSignalALU <= 4'b0001;
             end
             default: begin
                 regWrite <= 1'b0;
                 RegDst <= 1'bX;
                 ALUSrc <= 1'b1;
-                memWrite <= 1'b1;
+                memWrite <= 1'b0;
                 MemToReg <= 1'bX;
+                Branch <= 1'b0;
+                controlSignalALU <= 4'b0000;
+                
             end
         endcase
+        
     end
+
+    always @(*) begin 
+        PCSrc <= ALUZero && Branch;
+    end
+
+    mux2to132bit PCSRCMux(
+        .word_a(pcBranch),
+        .word_b(pcPlus4),
+        .sel(PCSrc),
+        .data_out(nextPCAdress)
+    );
 
     // Instanciar PC
     program_counter PC(
@@ -302,8 +352,23 @@ module cpu(
         .out(extendedWord)
     );
 
-    // Configurar sinais da ULA
-    assign controlSignalALU = 4'b0000;  // Adição
+     // Instanciar Adder Plus 4
+    adder_plus_4 adderP4(
+        .in(pcAdress),
+        .out(pcPlus4)
+    );
+
+    multiply_by_4 BranchMult(
+        .in(extendedWord),
+        .out(offsetPC)
+    );
+
+    adder PCBranchAdder(
+        .p1(offsetPC),
+        .p2(pcPlus4),
+        .out(pcBranch)
+    );
+
     assign ALUSrcA = readDR1;
 
     // Instanciar MuxAluSRC
@@ -339,12 +404,5 @@ module cpu(
         .sel(MemToReg),
         .data_out(result)
     );
-
-     // Instanciar Adder Plus 4
-    adder_plus_4 adderP4(
-        .in(pcAdress),
-        .out(nextPCAdress)
-    );
-
 
 endmodule
