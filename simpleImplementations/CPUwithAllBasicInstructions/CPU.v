@@ -70,7 +70,8 @@ module RegisterFile(ReadRegister1, ReadRegister2, WriteRegister, WriteData,  Reg
     
     always @(posedge Clk) begin
         if (RegWrite == 1) begin
-            Registers[WriteRegister] <= WriteData;
+          Registers[WriteRegister] <= WriteData;
+          //$display(WriteData);
         end
     end
     
@@ -131,7 +132,8 @@ module dmem (
     // Read data
     always @(posedge clk) begin
         if (we) begin
-            RAM[a[31:0]] <= wd;  // Write data to memory if write enable is high
+            RAM[a[31:0]] <= wd;
+          $display("Dados que estao sendo escritos: %h", wd);// Write data to memory if write enable is high
         end
         
     end
