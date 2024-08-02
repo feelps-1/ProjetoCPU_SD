@@ -1,80 +1,36 @@
-    .data
-w:      .word 1920         # largura
-h:      .word 1080         # altura
-
-result: .word 0            # variável para armazenar o resultado da função prop
-
-prop_msg: .asciiz "Proporção encontrada: "
-prop_1:   .asciiz "16:9\n"
-prop_2:   .asciiz "4:3\n"
-prop_0:   .asciiz "Nenhuma proporção válida encontrada.\n"
-
-    .text
-    .globl main
-
 main:
-    lw $t0, w            # carrega largura (w) em $t0
-    lw $t1, h            # carrega altura (h) em $t1
+    addi $t0, $t0, 213 # Armazena largura da imagem em $t0
+    addi $t1, $t1, 60  # Armazena altura da imagem em $t1
 
-    # Calcula width * 9 e height * 16
-    li $t2, 9
-    mult $t0, $t2        # $t2 = $t0 * 9
-    mflo $t2             # resultado da multiplicação em $t2
+    addi $t2, $t2, 9 # Armazena constante 9 da proporção 16:9 em $t2
+    mul $s0, $t0, $t2 # Multiplica largura($t0) por 9($t2) e guarda em $s0                
 
-    li $t3, 16
-    mult $t1, $t3        # $t3 = $t1 * 16
-    mflo $t3             # resultado da multiplicação em $t3
+    addi $t3, $t3, 16 # Armazena constante 16 da proporção 16:9 em $t3
+    mul $s1, $t1, $t3 # Multiplica altura($t1) por 16($t3) e guarda em $s1        
 
-    # Compara width * 9 == height * 16
-    beq $t2, $t3, found_prop1   # se width * 9 == height * 16, vai para found_prop1
+    beq $s0, $s1, found_prop1 # Verifica se $s0 e $s1 tem valores iguais, se sim, a proporção é 16:9  
 
-    # Calcula width * 3 e height * 4
-    li $t4, 3
-    mult $t0, $t4        # $t4 = $t0 * 3
-    mflo $t4             # resultado da multiplicação em $t4
+    addi $t4, $t4, 3 # Armazena constante 3 da proporção 4:3 em $t4
+    mul $s0, $t0, $t4 # Multiplica largura($t0) por 3($t4) e guarda em $s0                 
 
-    li $t5, 4
-    mult $t1, $t5        # $t5 = $t1 * 4
-    mflo $t5             # resultado da multiplicação em $t5
+    addi $t5, $t5, 4 # Armazena constante 4 da proporção 4:3 em $t5
+    mul $s1, $t1, $t5 # Multiplica altura($t1) por 4($t5) e guarda em $s1                   
 
-    # Compara width * 3 == height * 4
-    beq $t4, $t5, found_prop2   # se width * 3 == height * 4, vai para found_prop2
-
-    # Se não encontrar nenhuma proporção válida
-    j no_valid_prop
+    beq $s0, $s1, found_prop2 # Verifica se $s0 e $s1 tem valores iguais, se sim, a proporção é 4:3   
+ 
+    j no_valid_prop # Se nenhuma dessas condições for real, vai para no_valid_prop
 
 found_prop1:
-    li $t6, 1            # retorna 1 (proporção 16:9)
-    sw $t6, result       # armazena resultado em result
+    addi $s2, $s2, 1 # Retorna 1 se a proporção for 16:9 e vai para o final do programa                
     j end_program
 
 found_prop2:
-    li $t7, 2            # retorna 2 (proporção 4:3)
-    sw $t7, result       # armazena resultado em result
+    addi $s2, $s2, 2 # Retorna 2 se a proporção for 4:3 e vai para o final do programa                
     j end_program
 
 no_valid_prop:
-    li $t8, 0            # retorna 0 (nenhuma proporção válida encontrada)
-    sw $t8, result       # armazena resultado em result
+    addi $s2, $s2, 0 # Retorna 0 se não for nenhuma das proporções e vai para o final do programa
+    j end_program                  
 
 end_program:
-    # Imprime mensagem de proporção encontrada
-    li $v0, 4
-    la $a0, prop_msg
-    syscall
-
-    # Imprime resultado da função prop
-    lw $a0, result       # carrega resultado em $a0
-
-    li $v0, 1            # syscall para imprimir inteiro
-    syscall
-
-    # Imprime nova linha
-    li $v0, 4
-    la $a0, newline
-    syscall
-
-    # Termina o programa
-    li $v0, 10
-    syscall
-
+    j end_program # Entra num loop infinito do final do programa
