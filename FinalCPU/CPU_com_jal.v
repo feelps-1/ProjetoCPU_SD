@@ -19,7 +19,7 @@ module instruction_memory(address, instruction);
             32'd40: instruction = 32'b101011_10000_00010_0000000000010000 ; //sw $v0, 16($s0)
             32'd44: instruction = 32'b000011_00000000000000000000001100 ; //jal loop_infinito
             32'd48: instruction = 32'b000000_11111_000000000000000001000 ; //jr $ra
-            32'd52: instruction = 32'b000000_00100_00110_01000_00000011000 ; //	mul $t0, $a0, $a2
+            32'd52: instruction = 32'b000000_00100_00110_01000_00000011000 ; //mul $t0, $a0, $a2
             32'd56: instruction = 32'b000000_00101_00111_01001_00000011000 ; //mul $t1, $a1, $a3
             32'd60: instruction = 32'b000100_01000_01001_0000000000000101 ; //beq $t0, $t1, prop_4_3
             32'd64: instruction = 32'b000000_01000_00110_01000_00000011000 ; //mul $t0, $t0, $a2
