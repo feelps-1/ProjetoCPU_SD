@@ -259,7 +259,8 @@ module control_unit(input [31:0] instructionWord,
                     output reg ALUSrc,
                     output reg RegDst,
                     output reg regWrite,
-                    output reg Jump);
+                    output reg Jump,
+                    output reg JumpR);
   
    always @(instructionWord) begin
         case (instructionWord[31:26])
@@ -403,7 +404,8 @@ module cpu(
         .ALUSrc(ALUSrc),
         .RegDst(RegDst),
         .regWrite(regWrite),
-        .Jump(Jump)
+        .Jump(Jump),
+        .JumpR(JumpR)
     );
 
     always @(*) begin 
