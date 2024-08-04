@@ -1,10 +1,9 @@
-module ULA (
-    input [3:0] ALUControl,    // Código de controle da ULA (4 bits)
-    input [31:0] A,            // Operando A (32 bits)
-    input [31:0] B,            // Operando B (32 bits)
-    output reg [31:0] ALUResult, // Resultado da ULA (32 bits)
-    output reg Zero            // Sinal de Zero (1 bit)
-);
+module ULA(ALUControl, A, B, ALUResult, Zero);
+    input [3:0] ALUControl;    // Código de controle da ULA (4 bits)
+    input [31:0] A;            // Operando A (32 bits)
+    input [31:0] B;            // Operando B (32 bits)
+    output reg [31:0] ALUResult; // Resultado da ULA (32 bits)
+    output reg Zero;            // Sinal de Zero (1 bit)
 
     reg [31:0] ALUResult_reg;  // Registrador para armazenar o resultado
 
@@ -24,5 +23,4 @@ module ULA (
         ALUResult = ALUResult_reg;                    // Atribui o valor do registrador à saída
         Zero = (ALUResult == 0) ? 1 : 0;              // Sinal Zero
     end
-
 endmodule

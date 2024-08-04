@@ -24,7 +24,7 @@ def noX():
     modified = []
 
     for line in lines:
-        modified_line = line[0:14] + 'instruction = ' + line[14:]
+        modified_line = line[0:14] + line[14:]
         modified.append(modified_line)
 
     with open('./instructions.txt/', 'w') as file:
