@@ -4,70 +4,35 @@ module instruction_memory(
 );
     always @(*) begin
         case(address)
-            32'd0: instruction = 32'b001000_01000_01000_0000_1101_0101; // addi $t0, $t0, 213
-            32'd4: instruction = 32'b001000_01001_01001_0000_0011_1100; // addi $t1, $t1, 60
-            32'd8: instruction = 32'b001000_01010_01010_0000_0000_1001; // addi $t2, $t2, 9
-            32'd12: instruction = 32'b000000_01000_01010_10000_00000_011000; // mul $s0, $t0, $t2
-            32'd16: instruction = 32'b001000_01011_01011_0000_0001_0000; // addi $t3, $t3, 16
-            32'd20: instruction = 32'b000000_01001_01011_10001_00000_011000; // mul $s1, $t1, $t3
-            32'd24: instruction = 32'b000100_10000_10001_0000_0000_0010; // beq $s0, $s1, found_prop1
-            32'd28: instruction = 32'b001000_01100_01100_0000_0000_0011; // addi $t4, $t4, 3
-            32'd32: instruction = 32'b000000_01000_01100_10000_00000_011000; // mul $s0, $t0, $t4
-            32'd36: instruction = 32'b001000_01101_01101_0000_0000_0100; // addi $t5, $t5, 4
-            32'd40: instruction = 32'b000000_01001_01101_10001_00000_011000; // mul $s1, $t1, $t5
-            32'd44: instruction = 32'b000100_10000_10001_0000_0000_0010; // beq $s0, $s1, found_prop2
-            32'd48: instruction = 32'b000010_0000_0000_0000_0000_0101; // j no_valid_prop
-            32'd52: instruction = 32'b001000_10010_10010_0000_0000_0001; // addi $s2, $s2, 1
-            32'd56: instruction = 32'b000010_0000_0000_0000_0000_0111; // j end_program
-            32'd60: instruction = 32'b001000_10010_10010_0000_0000_0010; // addi $s2, $s2, 2
-            32'd64: instruction = 32'b000010_0000_0000_0000_0000_0111; // j end_program
-            32'd68: instruction = 32'b001000_10010_10010_0000_0000_0000; // addi $s2, $s2, 0
-            32'd72: instruction = 32'b000010_0000_0000_0000_0000_0111; // j end_program
-            32'd76: instruction = 32'b000010_0000_0000_0000_0000_0111; // j end_program
+            32'd0: instruction = 32'b001000_00000_10000_0000000000000000; //addi $s0, $zero, 0
+            32'd4: instruction = 32'b001000_00000_00100_0000000010100001 ; //addi $a0, $zero, 161
+            32'd8: instruction = 32'b101011_10000_00100_0000000000000000 ; //sw $a0, 0($s0)
+            32'd12: instruction = 32'b001000_00000_00101_0000000001011010 ; //addi $a1, $zero, 90
+            32'd16: instruction = 32'b101011_10000_00101_0000000000000100; //sw $a1, 4($s0)
+            32'd20: instruction = 32'b001000_00000_00110_0000000000000011; //addi $a2, $zero, 3
+            32'd24: instruction = 32'b101011_10000_00110_0000000000001000; //sw $a2, 8($s0)
+            32'd28: instruction = 32'b001000_00000_00111_0000000000000100; //addi $a3, $zero, 4
+            32'd32: instruction = 32'b101011_10000_00111_0000000000001100; //sw $a3, 12($s0)
+            32'd36: instruction = 32'b000011_00000000000000000000001101; //jal teste_de_proporcao
+            32'd40: instruction = 32'b10101110000000100000000000010000 ; //sw $v0, 16($s0)
+            32'd44: instruction = 32'b000011_00000000000000000000001100 ; //jal loop_infinito
+            32'd48: instruction = 32'b000000_11111_00000_00000_00000_001000 ; //jr $ra
+            32'd52: instruction = 32'b000000_00100_00110_01000_00000011000 ; //	mul $t0, $a0, $a2
+            32'd56: instruction = 32'b000000_00101_00111_0100100000011000 ; //mul $t1, $a1, $a3
+            32'd60: instruction = 32'b00100_01000_01001_0000000000001000 ; //beq $t0, $t1, prop_4_3
+            32'd64: instruction = 32'b000000_00110_00110_01010_00000011000 ; //mul $t2, $a2, $a2
+            32'd68: instruction = 32'b000000_00111_00111_01011_00000011000 ; //mul $t3, $a3, $a3
+            32'd72: instruction = 32'b000000_00100_01010_01000_00000011000 ; //mul $t0, $a0, $t2
+            32'd76: instruction = 32'b000000_00101_01011_01001_00000011000 ; //mul $t1, $a1, $t3
+            32'd80: instruction = 32'b000100_01000_01001_0000000000000101 ; //beq $t0, $t1, prop_16_9
+            32'd84: instruction = 32'b001000_00000_00010_0000000000000000 ; //addi $v0, $zero, 0
+            32'd88: instruction = 32'b000000_11111_00000_00000_00000_001000 ; //jr $ra
+            32'd92: instruction = 32'b001000_00000_00010_0000000000000010 ; //addi $v0, $zero, 2
+            32'd96: instruction = 32'b000000_11111_00000_00000_00000_001000  ; //jr $ra
+            32'd100: instruction = 32'b001000_00000_00010_0000000000000001 ; //addi $v0, $zero, 1
+            32'd104: instruction = 32'b000000_11111_00000_00000_00000_001000 ; //jr $ra
+            
             default: instruction = 32'b0;
         endcase
-    end
-endmodule
-
-module tb_instruction_memory;
-    // Declaração de variáveis
-    reg [31:0] address;
-    wire [31:0] instruction;
-
-    // Instancia o módulo de memória de instrução
-    instruction_memory im(
-        .address(address),
-        .instruction(instruction)
-    );
-
-    // Procedimento inicial para simulação
-    initial begin
-        // Monitoramento das variáveis para impressão automática
-        $monitor("Address: %0d, Instruction: %b", address, instruction);
-
-        // Define diferentes endereços para teste
-        address = 32'd0; #10;
-        address = 32'd4; #10;
-        address = 32'd8; #10;
-        address = 32'd12; #10;
-        address = 32'd16; #10;
-        address = 32'd20; #10;
-        address = 32'd24; #10;
-        address = 32'd28; #10;
-        address = 32'd32; #10;
-        address = 32'd36; #10;
-        address = 32'd40; #10;
-        address = 32'd44; #10;
-        address = 32'd48; #10;
-        address = 32'd52; #10;
-        address = 32'd56; #10;
-        address = 32'd60; #10;
-        address = 32'd64; #10;
-        address = 32'd68; #10;
-        address = 32'd72; #10;
-        address = 32'd76; #10;
-
-        // Finaliza a simulação
-        $finish;
     end
 endmodule
