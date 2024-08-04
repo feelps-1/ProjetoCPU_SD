@@ -7,9 +7,9 @@ prop_type = prop(width, height, fa, fb)
 #print(prop_type)
 
 def prop(w, h, a, b):
-    if w * a == h * b:
+    if w * a == h * b: # Testa se é 4:3
         return 2
-    elif w * a * a == h * b * b:
+    elif w * a * a == h * b * b: # Testa se é 16:9
         return 1
     else:
         return 0
