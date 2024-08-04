@@ -14,7 +14,7 @@ module instruction_memory(
             32'd28: instruction = 32'b001000_00000_00111_0000000000000100; //addi $a3, $zero, 4
             32'd32: instruction = 32'b101011_10000_00111_0000000000001100; //sw $a3, 12($s0)
             32'd36: instruction = 32'b000011_00000000000000000000001101; //jal teste_de_proporcao
-            32'd40: instruction = 32'b10101110000000100000000000010000 ; //sw $v0, 16($s0)
+            32'd40: instruction = 32'b101011_10000_00010_0000000000010000 ; //sw $v0, 16($s0)
             32'd44: instruction = 32'b000011_00000000000000000000001100 ; //jal loop_infinito
             32'd48: instruction = 32'b000000_11111_00000_00000_00000_001000 ; //jr $ra
             32'd52: instruction = 32'b000000_00100_00110_01000_00000011000 ; //	mul $t0, $a0, $a2
