@@ -92,6 +92,7 @@ module RegisterFile(ReadRegister1, ReadRegister2, WriteRegister, WriteData,  Reg
     always @(posedge Clk) begin
         if (RegWrite == 1) begin
           Registers[WriteRegister] <= WriteData;
+          $display("Dados que estao sendo escritos no Reg: %d", WriteData);
           //$display(WriteData);
         end
     end
@@ -154,7 +155,7 @@ module dmem (
     always @(posedge clk) begin
         if (we) begin
             RAM[a[31:0]] <= wd;
-          $display("Dados que estao sendo escritos: %h", wd);// Write data to memory if write enable is high
+          $display("Dados que estao sendo escritos: %d", wd);// Write data to memory if write enable is high
         end
         
     end
@@ -378,13 +379,13 @@ module cpu(
     input wire enable
 );
     // Sinais internos
-    wire [31:0] pcAdress, nextPCAdress, offsetPC, pcBranch, pcPlus4, notJumpAdress;
+    wire [31:0] pcAdress, nextPCAdress, offsetPC, pcBranch, pcPlus4, notJumpAdress, dataWriteRegister, JumpAdressR;
     reg [31:0]JumpAdress;
     reg [31:0] instructionWord;
     reg [25:0] partJump;
     reg [27:0] lowJump;
     reg [4:0] dataRegister1, dataRegister2;
-    wire [4:0] wRegister1, wRegister2, wRegister;
+    wire [4:0] wRegister1, wRegister2, wRegister, Reg31, wRegister0;
     reg [31:0] readDR1, readDR2;
     reg [15:0] wordToExtend;
     wire [31:0] extendedWord;
@@ -392,7 +393,7 @@ module cpu(
     reg [3:0] controlSignalALU;
     wire ALUZero;
     reg [31:0] readDataMem;
-    reg ALUSrc, RegDst, MemToReg, regWrite, memWrite, Branch, PCSrc, Jump;
+    reg ALUSrc, RegDst, MemToReg, regWrite, memWrite, Branch, PCSrc, Jump, JumpR;
     wire [31:0] result;
 
     control_unit CU(
