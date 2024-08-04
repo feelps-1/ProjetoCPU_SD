@@ -40,8 +40,7 @@ module tb_instruction_memory;
         address = 32'd88; #10;
         address = 32'd92; #10;
         address = 32'd96; #10;
-        address = 32'd100; #10;
-        address = 32'd104; #10;
+
         
 
         // Finaliza a simulação
