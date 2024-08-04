@@ -266,7 +266,7 @@ module control_unit(input [31:0] instructionWord,
    always @(instructionWord) begin
         case (instructionWord[31:26])
             6'b000000: begin
-                if (instructionWord[5:0] == 6'b001000) begin
+                if (instructionWord[5:0] == 6'b001000) begin //jr
                     regWrite <= 1'b0;
                     RegDst <= 1'bX;
                     ALUSrc <= 1'bX;
@@ -299,7 +299,7 @@ module control_unit(input [31:0] instructionWord,
                 end
             end
 
-            6'b100011: begin
+            6'b100011: begin //lw
                 regWrite <= 1'b1;
                 RegDst <= 1'b0;
                 ALUSrc <= 1'b1;
@@ -311,7 +311,7 @@ module control_unit(input [31:0] instructionWord,
                 JumpR <= 1'bX;
             end
 
-            6'b101011: begin
+            6'b101011: begin //sw
                 regWrite <= 1'b0;
                 RegDst <= 1'bX;
                 ALUSrc <= 1'b1;
@@ -323,7 +323,7 @@ module control_unit(input [31:0] instructionWord,
                 JumpR <= 1'bX;
             end
 
-            6'b000100: begin
+            6'b000100: begin //beq
                 regWrite <= 1'b0;
                 RegDst <= 1'bX;
                 ALUSrc <= 1'b0;
@@ -335,7 +335,7 @@ module control_unit(input [31:0] instructionWord,
                 JumpR <= 1'bX;
             end
 
-            6'b001000: begin
+            6'b001000: begin //addi
                 regWrite <= 1'b1;
                 RegDst <= 1'b0;
                 ALUSrc <= 1'b1;
@@ -346,7 +346,7 @@ module control_unit(input [31:0] instructionWord,
                 Jump <= 1'b0;
                 JumpR <= 1'bX;
             end
-            6'b000011: begin 
+            6'b000011: begin //jal
                 regWrite <= 1'b1;
                 RegDst <= 1'bX;
                 ALUSrc <= 1'bX;
@@ -366,6 +366,7 @@ module control_unit(input [31:0] instructionWord,
                 Branch <= 1'b0;
                 ALUControl <= 4'b0000;
                 Jump <= 1'b0;
+                JumpR <= 1'bX;
             end
         endcase
         
