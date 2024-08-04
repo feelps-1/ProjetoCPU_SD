@@ -1,10 +1,16 @@
 w = 1920
 h = 1080
 
+result = 0
+
 def prop(width, height):
     if width * 9 == height * 16:
-        return 1
+        proportion = 1
     elif width * 3 == height * 4:
-        return 2
+        proportion = 2
     else:
-        return 0
+        proportion = 0
+
+    return proportion
+
+result = prop(1920, 1080)
