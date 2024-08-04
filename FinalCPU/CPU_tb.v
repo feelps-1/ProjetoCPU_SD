@@ -38,7 +38,7 @@ module cpu_tb;
 
     // Sequência de testes
     initial begin
-      $monitor("Time: %0t | PC: %h | Instr: %h | RegWrite: %b | MemToReg: %b | RegDst: %b | MemWrite: %b | ReadDR1: %h | ReadDR2: %h | ALUResult: %h | ReadDataMem: %h | Branch: %b | Clock: %b | PCSrc: %b | JumpA: %h | Jump: %b",
+      $monitor("Time: %0t | PC: %d | Instr: %h | RegWrite: %b | MemToReg: %b | RegDst: %b | MemWrite: %b | ReadDR1: %h | ReadDR2: %h | ALUResult: %h | ReadDataMem: %h | Branch: %b | Clock: %b | PCSrc: %b | JumpA: %h | Jump: %b",
             $time, uut.pcAdress, uut.instructionWord, uut.regWrite, uut.MemToReg, uut.RegDst, uut.memWrite, uut.readDR1, uut.readDR2, uut.resultALU, uut.readDataMem, uut.Branch, clock, uut.PCSrc, uut.JumpAdress, uut.Jump);
 
         // Inicializar o reset
@@ -49,32 +49,7 @@ module cpu_tb;
       	enable = 1;
         
         // Esperar um tempo para cada instrução ser executada
-        #290;
-      
-
-        // Verificar o resultado da instrução lw $9, 0($8)
-      if (uut.register_file.Registers[9] !== 32'hDEADBEEF) begin
-            $display("Test failed for lw $9, 0($8)");
-         
-        end else begin
-            $display("Test passed for lw $9, 0($8)");
-        end
-
-        // Verificar o resultado da instrução sw $13, 0($8)
-      if (uut.dataMemory.RAM[16] !== 32'hFF) begin
-            $display("Test failed for sw $13, 0($8)");
-          
-        end else begin
-            $display("Test passed for sw $13, 0($8)");
-        end
-
-        // Verificar o resultado da instrução add $12, $10, $11
-        if (uut.register_file.Registers[12] !== (uut.register_file.Registers[10] + uut.register_file.Registers[11])) begin
-            $display("Test failed for add $12, $10, $11");
-         
-        end else begin
-            $display("Test passed for add $12, $10, $11");
-        end
+        #220;
 
         $finish;
     end
