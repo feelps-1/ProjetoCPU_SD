@@ -155,9 +155,9 @@ module cpu(clock, reset, enable);
     reg [25:0] partJump;
     reg [27:0] lowJump;
     reg [15:0] wordToExtend;
-    reg [4:0] dataRegister1, dataRegister2;
+    reg [4:0] dataRegister1, dataRegister2, Reg31;
     reg [3:0] controlSignalALU;
-    wire [4:0] wRegister1, wRegister2, wRegister, Reg31, wRegister0;
+    wire [4:0] wRegister1, wRegister2, wRegister, wRegister0;
     wire ALUZero;
     reg ALUSrc, RegDst, MemToReg, regWrite, memWrite, Branch, PCSrc, Jump, JumpR;
     
