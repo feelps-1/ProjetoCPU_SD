@@ -71,7 +71,7 @@ module control_unit(instructionWord, MemToReg, memWrite, Branch, ALUSrc, RegDst,
                         6'b100110: ALUControl <= 4'b0100; //xor
                         6'b000000: ALUControl <= 4'b0101; //shift left logical
                         6'b000010: ALUControl <= 4'b0110; //shift right logical
-                        6'b011000: ALUControl <= 4'b0111; //mult
+                        6'b011000: ALUControl <= 4'b0111; //mul
                         default: ALUControl <= 4'b0000;
                     endcase
                 end
